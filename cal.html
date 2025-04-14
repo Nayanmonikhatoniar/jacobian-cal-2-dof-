@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2-DOF Manipulator Jacobian & Velocity Calculator - Assam Dynamics</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #003366;
+            text-align: center;
+        }
+
+        .input-group {
+            margin: 12px 0;
+        }
+
+        label {
+            display: inline-block;
+            width: 200px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 6px;
+            width: 150px;
+            border: 1px solid #003366;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0055aa;
+        }
+
+        #results {
+            margin-top: 30px;
+            background: #f0f7ff;
+            padding: 20px;
+            border: 2px solid #003366;
+            border-radius: 10px;
+        }
+
+        .matrix {
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        footer {
+            margin-top: 40px;
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        Assam Dynamics
+    </header>
+
+    <main>
+        <h2>2-DOF Manipulator Jacobian & End-Effector Velocity Calculator</h2>
+
+        <div class="input-group">
+            <label for="l1">Link 1 Length (l1):</label>
+            <input type="number" id="l1" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="l2">Link 2 Length (l2):</label>
+            <input type="number" id="l2" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="theta1">Joint Angle θ1 (degrees):</label>
+            <input type="number" id="theta1" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="theta2">Joint Angle θ2 (degrees):</label>
+            <input type="number" id="theta2" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="qdot1">Joint Velocity q̇1:</label>
+            <input type="number" id="qdot1" step="any">
+        </div>
+
+        <div class="input-group">
+            <label for="qdot2">Joint Velocity q̇2:</label>
+            <input type="number" id="qdot2" step="any">
+        </div>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <div id="results"></div>
+    </main>
+
+    <footer>
+        All rights reserved @AssamDynamics2025
+    </footer>
+
+    <script>
+        function degToRad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        function calculate() {
+            var l1 = parseFloat(document.getElementById("l1").value);
+            var l2 = parseFloat(document.getElementById("l2").value);
+            var theta1 = degToRad(parseFloat(document.getElementById("theta1").value));
+            var theta2 = degToRad(parseFloat(document.getElementById("theta2").value));
+            var qdot1 = parseFloat(document.getElementById("qdot1").value);
+            var qdot2 = parseFloat(document.getElementById("qdot2").value);
+
+            var J11 = -l1 * Math.sin(theta1) - l2 * Math.sin(theta1 + theta2);
+            var J12 = -l2 * Math.sin(theta1 + theta2);
+            var J21 =  l1 * Math.cos(theta1) + l2 * Math.cos(theta1 + theta2);
+            var J22 =  l2 * Math.cos(theta1 + theta2);
+
+            var vx = J11 * qdot1 + J12 * qdot2;
+            var vy = J21 * qdot1 + J22 * qdot2;
+
+            document.getElementById("results").innerHTML = `
+                <h3>Jacobian Matrix:</h3>
+                <div class="matrix">
+                    [ ${J11.toFixed(4)} , ${J12.toFixed(4)} ]<br>
+                    [ ${J21.toFixed(4)} , ${J22.toFixed(4)} ]
+                </div>
+                <h3>End-Effector Velocity:</h3>
+                <p>vx = <strong>${vx.toFixed(4)}</strong></p>
+                <p>vy = <strong>${vy.toFixed(4)}</strong></p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
